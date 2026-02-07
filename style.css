@@ -1,0 +1,226 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background: radial-gradient(circle at top, #0b132b, #020617 40%, #000 90%);
+color:white;
+padding:15px;
+overflow-x:hidden;
+}
+
+/* ⭐ ADDED MOBILE TOUCH FIX */
+#globeViz canvas{
+touch-action:none;
+}
+
+/* ---------- HEADER ---------- */
+
+header{
+display:flex;
+flex-direction:column;
+gap:12px;
+margin-bottom:15px;
+}
+
+h1{
+font-size:20px;
+background:linear-gradient(90deg,#00eaff,#ff00aa);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+/* ---------- CONTROLS ---------- */
+
+.controls{
+display:flex;
+flex-direction:column;
+gap:8px;
+width:100%;
+}
+
+button,select{
+background:#0f172a;
+border:1px solid #1e293b;
+color:white;
+padding:11px 14px;
+border-radius:12px;
+cursor:pointer;
+transition:0.3s;
+font-size:14px;
+width:100%;
+}
+
+button:hover,select:hover{
+box-shadow:0 0 15px #00eaff;
+transform:translateY(-2px);
+}
+
+/* ---------- CLOCK ---------- */
+
+#clock{
+margin-top:6px;
+color:#94a3b8;
+font-size:13px;
+}
+
+/* ---------- TIMELINE ---------- */
+
+.timeline{
+display:grid;
+grid-template-columns:1fr;
+gap:12px;
+margin-top:20px;
+}
+
+.month-card{
+background:#0f172a;
+border-radius:16px;
+padding:12px;
+transition:0.3s;
+}
+
+.month-card:hover{
+transform:translateY(-4px);
+box-shadow:0 0 25px rgba(0,234,255,0.25);
+}
+
+.month-card h3{
+font-size:15px;
+margin-bottom:10px;
+color:#e2e8f0;
+}
+
+.holiday-pill{
+font-size:13px;
+padding:9px 10px;
+border-radius:10px;
+margin-bottom:6px;
+display:block;
+cursor:pointer;
+}
+
+/* ---------- HOLIDAY TYPES ---------- */
+
+.type-National{background:linear-gradient(135deg,#ff9933,#ff5722)}
+.type-Festival{background:linear-gradient(135deg,#ff00aa,#7c3aed)}
+.type-Regional{background:linear-gradient(135deg,#3b82f6,#06b6d4)}
+.type-Corporate{background:linear-gradient(135deg,#10b981,#22c55e)}
+
+/* ---------- GLOBE ---------- */
+
+#globeViz{
+width:100%;
+height:260px;
+margin-top:30px;
+border-radius:18px;
+overflow:hidden;
+background:#020617;
+}
+
+/* ---------- MODAL ---------- */
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.75);
+display:flex;
+justify-content:center;
+align-items:center;
+opacity:0;
+pointer-events:none;
+transition:0.4s;
+padding:15px;
+}
+
+.modal.active{
+opacity:1;
+pointer-events:all;
+}
+
+.modal-box{
+background:#0f172a;
+padding:20px;
+border-radius:18px;
+width:100%;
+max-width:360px;
+}
+
+/* ================================================= */
+/* 📱 TABLET RESPONSIVE */
+/* ================================================= */
+
+@media (min-width:600px){
+
+body{
+padding:20px;
+}
+
+.controls{
+flex-direction:row;
+flex-wrap:wrap;
+}
+
+button,select{
+width:auto;
+flex:1;
+}
+
+.timeline{
+grid-template-columns:repeat(2,1fr);
+}
+
+#globeViz{
+height:320px;
+}
+
+}
+
+/* ================================================= */
+/* 💻 SMALL LAPTOP */
+/* ================================================= */
+
+@media (min-width:900px){
+
+header{
+flex-direction:row;
+justify-content:space-between;
+align-items:center;
+}
+
+h1{
+font-size:24px;
+}
+
+.controls{
+width:auto;
+}
+
+.timeline{
+grid-template-columns:repeat(4,1fr);
+}
+
+#globeViz{
+height:420px;
+}
+
+}
+
+/* ================================================= */
+/* 🖥️ DESKTOP */
+/* ================================================= */
+
+@media (min-width:1200px){
+
+.timeline{
+grid-template-columns:repeat(12,1fr);
+}
+
+#globeViz{
+height:460px;
+}
+
+}
