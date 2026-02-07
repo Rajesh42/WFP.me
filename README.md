@@ -1,5 +1,6 @@
 <!-- PROJECT HEADER -->
-<h1 align="center">🌍 WFP.me – World Focus Planner</h1>
+<h1 align="center">🌍 WFP.me – Win, Focus & Progress With Me</h1>
+<img src="https://github.com/user-attachments/assets/0f830a19-60ad-47bc-89f0-8e6e354e64cd" width="100%">
 
 <p align="center">
 Global Holiday & Workforce Intelligence Platform  
