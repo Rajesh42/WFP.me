@@ -12,6 +12,18 @@ padding:15px;
 overflow-x:hidden;
 }
 
+body::before{
+content:"";
+position:fixed;
+top:-200px;
+left:-200px;
+width:600px;
+height:600px;
+background:radial-gradient(circle,#00eaff33,transparent 70%);
+filter:blur(80px);
+z-index:-1;
+}
+
 /* ⭐ ADDED MOBILE TOUCH FIX */
 #globeViz canvas{
 touch-action:none;
@@ -23,14 +35,97 @@ header{
 display:flex;
 flex-direction:column;
 gap:12px;
-margin-bottom:15px;
+margin-bottom:20px;
+padding-bottom:12px;
+border-bottom:1px solid rgba(0,234,255,0.15);
 }
 
 h1{
-font-size:20px;
-background:linear-gradient(90deg,#00eaff,#ff00aa);
+font-weight:600;
+letter-spacing:0.5px;
+
+display:inline-block;
+position:relative;
+text-shadow:0 0 18px rgba(0,234,255,0.3);
+
+/* 🌈 Flowing Gradient Text */
+background:linear-gradient(
+90deg,
+#00eaff,
+#ff00aa,
+#00eaff
+);
+
+background-size:200% auto;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+
+animation: gradientFlow 5s linear infinite;
+}
+
+@keyframes gradientFlow{
+0%{background-position:0% center;}
+100%{background-position:200% center;}
+
+}
+
+h1::before{
+content:"";
+position:absolute;
+top:0;
+left:-40%;   /* reduced travel distance */
+
+width:18%;   /* reduced swipe size */
+height:100%;
+
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.4),
+transparent
+);
+
+transform:skewX(-25deg);
+animation: shineSweep 6s infinite;
+}
+
+@keyframes shineSweep{
+0%{left:-40%;}
+100%{left:100%;}
+}
+
+h1::after{
+content:"";
+position:absolute;
+left:0;
+bottom:-6px;
+
+width:100%;
+height:3px;
+
+border-radius:50px;
+
+background:linear-gradient(90deg,#00eaff,#ff00aa);
+box-shadow:0 0 12px #00eaff;
+
+transform:scaleX(0.8);
+transform-origin:left;
+
+transition:0.4s ease;
+}
+
+h1:hover::after{
+transform:scaleX(1);
+height:4px;
+
+box-shadow:
+0 0 25px #00eaff,
+0 0 40px #ff00aa;
+}
+
+
+.section-title{
+margin-top:40px;
 }
 
 /* ---------- CONTROLS ---------- */
@@ -103,6 +198,11 @@ display:block;
 cursor:pointer;
 }
 
+.news-card:hover{
+transform:translateY(-3px);
+box-shadow:0 0 15px rgba(56,189,248,0.3);
+}
+
 /* ---------- HOLIDAY TYPES ---------- */
 
 .type-National{background:linear-gradient(135deg,#ff9933,#ff5722)}
@@ -120,6 +220,234 @@ border-radius:18px;
 overflow:hidden;
 background:#020617;
 }
+/* ===============================
+🌞 LIGHT THEME SUPPORT
+=============================== */
+
+body.light-theme{
+background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+color:#020617;
+}
+
+/* Header */
+body.light-theme h1{
+background:linear-gradient(90deg,#2563eb,#ec4899);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+/* Controls */
+body.light-theme button,
+body.light-theme select{
+background:white;
+color:#020617;
+border:1px solid #cbd5e1;
+}
+
+body.light-theme button:hover,
+body.light-theme select:hover{
+box-shadow:0 0 12px rgba(37,99,235,0.3);
+}
+
+/* Timeline */
+body.light-theme .month-card{
+background:white;
+color:#020617;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+body.light-theme .month-card h3{
+color:#020617;
+}
+
+/* Clock */
+body.light-theme #clock{
+color:#334155;
+}
+
+/* Globe */
+body.light-theme #globeViz{
+background:#e2e8f0;
+}
+
+/* Modal */
+body.light-theme .modal-box{
+background:white;
+color:#020617;
+}
+
+.modal-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+}
+.weather-header{
+display:flex;
+align-items:center;
+gap:15px;
+margin-top:10px;
+}
+
+.weather-icon{
+font-size:40px;
+animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-5px);}
+}
+
+.weather-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:18px;
+}
+
+.weather-card{
+background:rgba(255,255,255,0.05);
+padding:12px;
+border-radius:14px;
+text-align:center;
+transition:0.3s;
+}
+
+.weather-card:hover{
+transform:translateY(-3px);
+box-shadow:0 0 15px rgba(0,234,255,0.3);
+}
+.weather-ai{
+margin-top:18px;
+padding:14px;
+border-radius:14px;
+background:rgba(0,234,255,0.08);
+font-size:14px;
+}
+
+.weather-sunny{
+background:linear-gradient(135deg,#facc15,#fb923c);
+}
+
+.weather-rain{
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+}
+
+.weather-snow{
+background:linear-gradient(135deg,#e0f2fe,#bae6fd);
+}
+
+.modal-desc{
+flex:1;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+min-height:0;   /* IMPORTANT */
+}
+
+.modal-content-scroll{
+flex:1;
+overflow-y:auto;
+padding-right:8px;
+}
+
+.modal-title{
+font-size:20px;
+font-weight:600;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+max-width:70%;
+}
+
+/* Compact Refresh Button */
+.refresh-btn{
+font-size:11px;
+padding:4px 10px;
+border-radius:20px;
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+border:none;
+cursor:pointer;
+color:white;
+white-space:nowrap;
+transition:0.3s;
+}
+
+.refresh-btn:hover{
+transform:scale(1.05);
+}
+
+
+
+/* News Style */
+.news-skeleton{
+height:70px;
+margin-top:10px;
+border-radius:12px;
+background:linear-gradient(90deg,#1e293b 25%, #334155 50%, #1e293b 75%);
+background-size:200% 100%;
+animation:skeleton 1.2s infinite linear;
+}
+
+@keyframes skeleton{
+0%{background-position:200% 0}
+100%{background-position:-200% 0}
+}
+
+.news-card{
+margin-top:12px;
+padding:14px;
+border-radius:14px;
+background:rgba(255,255,255,0.05);
+transition:0.3s;
+cursor:pointer;
+
+/* FIX TEXT OVERFLOW */
+word-wrap:break-word;
+overflow-wrap:break-word;
+word-break:break-word;
+white-space:normal;
+line-height:1.4;
+}
+.news-card:hover{
+transform:translateY(-3px);
+box-shadow:0 0 12px rgba(56,189,248,0.4);
+}
+
+.news-title{
+display:-webkit-box;
+-webkit-line-clamp:3;
+-webkit-box-orient:vertical;
+overflow:hidden;
+}
+
+.news-source{
+font-size:12px;
+opacity:0.6;
+margin-top:5px;
+}
+
+.modal-footer{
+padding-top:10px;
+display:flex;
+justify-content:center;
+}
+
+
+.close-btn{
+background:linear-gradient(135deg,#64748b,#334155);
+color:white;
+border:none;
+}
+
+
+.close-btn:hover{
+background:#38bdf8;
+color:white;
+border-color:#38bdf8;
+}
+
 
 /* ---------- MODAL ---------- */
 
@@ -147,8 +475,19 @@ padding:20px;
 border-radius:18px;
 width:100%;
 max-width:360px;
+height:80vh;
+max-height:80vh;
+display:flex;
+flex-direction:column;
+overflow:hidden;
 }
 
+.modal-desc{
+flex:1;
+overflow-y:auto;
+padding-right:6px;
+min-height:0;
+}
 /* ================================================= */
 /* 📱 TABLET RESPONSIVE */
 /* ================================================= */
@@ -174,8 +513,24 @@ grid-template-columns:repeat(2,1fr);
 }
 
 #globeViz{
-height:320px;
+width:100%;
+height:260px;
+margin-top:25px;
+border-radius:22px;
+overflow:hidden;
+background:radial-gradient(circle at center,#020617,#000);
+box-shadow:
+0 0 25px rgba(0,234,255,0.25),
+inset 0 0 25px rgba(255,0,170,0.15);
+transition:0.4s;
 }
+
+#globeViz:hover{
+box-shadow:
+0 0 40px rgba(0,234,255,0.4),
+inset 0 0 30px rgba(255,0,170,0.2);
+}
+
 
 }
 
