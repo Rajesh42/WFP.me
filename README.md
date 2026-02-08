@@ -1,8 +1,3 @@
-<!-- PROJECT HEADER -->
-<h1 align="center">🌍 WFP.me - Waves From Planet</h1>
-<img src="https://github.com/user-attachments/assets/0f830a19-60ad-47bc-89f0-8e6e354e64cd" width="100%">
-<!-- ================= HERO SECTION ================= -->
-
 <h1 align="center">🌍 WFP.me</h1>
 
 <h3 align="center">
