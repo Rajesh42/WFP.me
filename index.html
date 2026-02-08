@@ -1,50 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WFP.me - Win, Focus & Progress With Me(Global Holiday & Workforce Intelligence)</title>
-<link rel="icon" type="image/png" href="./favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://unpkg.com/globe.gl"></script>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WFP.me - Waves From Planet | Global Holiday Intelligence</title>
+    <link rel="icon" type="image/png" href="./favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <header>
-<h1>🌍 WFP.me - Win, Focus & Progress With Me</h1>
-<div class="controls">
-    <select id="country"></select>
-    
-<select id="holidayType">
-<option value="All">All Types</option>
-<option value="National">National</option>
-<option value="Festival">Festival</option>
-<option value="Regional">Regional</option>
-<option value="Corporate">Corporate</option>
-</select>
+        <h1>🌍 WFP.me - Waves From Planet</h1>
+        <div class="controls">
+            <select id="country"></select>
 
-<button onclick="loadTimeline()">Load Timeline</button>
-</div>
-</header>
+            <select id="holidayType">
+                <option value="All">All Types</option>
+                <option value="National">National</option>
+                <option value="Festival">Festival</option>
+                <option value="Regional">Regional</option>
+                <option value="Corporate">Corporate</option>
+            </select>
 
-<div id="clock"></div>
-<div id="timeline" class="timeline"></div>
+            <button onclick="loadWeather()">🌦️ Weather</button>
+            <button onclick="loadNews()">📰 News</button>
+            <button id="themeToggle">🌙 Dark Mode</button>
+        </div>
+    </header>
 
-<h2 style="margin-top:40px">🌐 Interactive Holiday Globe</h2>
-<div id="globeViz"></div>
+    <div id="clock"></div>
+    <div id="timeline" class="timeline"></div>
 
-<div class="modal" id="modal">
-    <div class="modal-box">
-        <h2 id="modalTitle"></h2>
-<p id="modalDesc"></p>
-<br>
-<button onclick="closeModal()">Close</button>
-</div>
-</div>
+    <h1 class="section-title" style="margin-top:40px">🌐 Interactive Globe</h1>
+    <div id="globeViz"></div>
 
-<script src="script.js"></script>
-<script src="holidays-data.js"></script>
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <h2 id="modalTitle"></h2>
+            <div id="modalDesc" class="modal-desc">
+
+                <div class="weather-header">
+                    <div id="weatherIcon" class="weather-icon">☀</div>
+                    <div id="weatherMain"></div>
+                </div>
+
+                <div class="weather-grid" id="weatherStats"></div>
+
+                <div class="weather-ai" id="weatherAI"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="close-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="holidays-data.js"></script>
 </body>
+
 </html>
