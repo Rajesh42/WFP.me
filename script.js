@@ -1,4 +1,3 @@
-
 const countries=[
 {code:'IN',name:'India',tz:'Asia/Kolkata',utc:'+05:30',lat:20.5937,lng:78.9629,color:'#ff9933'},
 {code:'US',name:'United States',tz:'America/New_York',utc:'-05:00',lat:37.0902,lng:-95.7129,color:'#3b82f6'},
@@ -109,10 +108,299 @@ function closeModal(){
 modal.classList.remove('active');
 }
 
-const globe = Globe()(document.getElementById('globeViz'))
-.globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+/* ===============================
+📰 COUNTRY NEWS FEATURE
+=============================== */
+let previousTitles = new Set();
+
+async function loadNews(){
+
+const c=countries.find(x=>x.code===countrySel.value);
+if(!c) return;
+
+modalTitle.innerHTML=`
+<div class="modal-header">
+<span class="modal-title">📰 ${c.name} News</span>
+<button class="refresh-btn" onclick="loadNews()">Refresh</button>
+</div>
+`;
+
+modalDesc.innerHTML=`
+<div class="modal-content-scroll">
+<div class="news-skeleton"></div>
+<div class="news-skeleton"></div>
+<div class="news-skeleton"></div>
+</div>
+`;
+
+modal.classList.add('active');
+
+const cacheBuster=Date.now();
+
+/* ---------- FETCH HELPER ---------- */
+
+async function fetchRSS(url){
+
+try{
+const api=`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&cb=${cacheBuster}`;
+const res=await fetch(api);
+const data=await res.json();
+return data.items || [];
+}catch{
+return [];
+}
+
+}
+
+/* ---------- SEARCH VARIANTS ---------- */
+
+const searchVariants=[
+c.name,
+`${c.name} news`,
+`${c.name} economy`,
+`${c.name} politics`,
+`${c.name} business`
+];
+
+const variant=searchVariants[Math.floor(Math.random()*searchVariants.length)];
+
+const feeds=[
+`https://news.google.com/rss/search?q=${encodeURIComponent(variant)}`,
+`https://news.google.com/rss?hl=en-${c.code}&gl=${c.code}&ceid=${c.code}:en`,
+`https://news.google.com/rss`
+];
+
+/* ---------- FETCH ---------- */
+
+let results=[];
+
+for(const feed of feeds){
+const items=await fetchRSS(feed);
+results=[...results,...items];
+}
+
+/* ---------- REMOVE DUPLICATES ---------- */
+
+const seen=new Set();
+
+results=results.filter(n=>{
+if(seen.has(n.title)) return false;
+seen.add(n.title);
+return true;
+});
+
+/* ---------- COUNTRY RELEVANCE SCORING ---------- */
+
+results = results.map(n=>{
+
+const text=(n.title+" "+(n.description||"")).toLowerCase();
+let score=0;
+
+if(text.includes(c.name.toLowerCase())) score+=3;
+if(text.includes(c.code.toLowerCase())) score+=2;
+if(n.source?.name?.toLowerCase().includes(c.name.toLowerCase())) score+=1;
+
+return {...n,score};
+
+});
+
+/* ---------- SORT BY RELEVANCE ---------- */
+
+results.sort((a,b)=>b.score-a.score);
+
+/* ---------- REMOVE PREVIOUS ---------- */
+
+results=results.filter(n=>!previousTitles.has(n.title));
+
+if(results.length<3){
+previousTitles.clear();
+}
+
+/* ---------- SHUFFLE TOP RESULTS ONLY ---------- */
+
+let topResults=results.slice(0,10);
+topResults.sort(()=>Math.random()-0.5);
+
+/* ---------- STORE MEMORY ---------- */
+
+topResults.slice(0,5).forEach(n=>{
+previousTitles.add(n.title);
+});
+
+/* ---------- NO RESULT ---------- */
+
+if(topResults.length===0){
+modalDesc.innerHTML="📰 Try refreshing after few seconds";
+return;
+}
+
+/* ---------- RENDER ---------- */
+
+let html="";
+
+topResults.slice(0,5).forEach(n=>{
+
+html+=`
+<div class="news-card" onclick="window.open('${n.link}')">
+
+<div class="news-title">${n.title}</div>
+
+<div class="news-source">
+${n.source?.name || ""} • ${new Date(n.pubDate).toLocaleDateString()}
+</div>
+
+</div>
+`;
+});
+
+modalDesc.innerHTML=`
+<div class="modal-content-scroll">
+${html}
+</div>
+`;
+
+}
+
+
+
+
+
+/*Wheather Code*/
+function weatherCodeToIcon(code){
+const map={
+0:"☀️",
+1:"🌤️",
+2:"⛅",
+3:"☁️",
+45:"🌫️",
+48:"🌫️",
+51:"🌦️",
+61:"🌧️",
+71:"❄️",
+95:"⛈️"
+};
+return map[code] || "🌍";
+}
+
+/* ===============================
+🌦️ OPEN METEO WEATHER FEATURE
+=============================== */
+
+async function loadWeather(){
+
+const c=countries.find(x=>x.code===countrySel.value);
+if(!c) return;
+
+const url=`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
+
+try{
+
+const res=await fetch(url);
+const data=await res.json();
+
+const current=data.current_weather;
+const daily=data.daily;
+
+if(!current){
+alert("Weather unavailable");
+return;
+}
+
+const icon=weatherCodeToIcon(current.weathercode);
+
+/* ---------- AI Suggestion ---------- */
+
+let suggestion="";
+
+if([61,63,65].includes(current.weathercode))
+suggestion="☔ Carry umbrella";
+
+else if([0,1].includes(current.weathercode))
+suggestion="🌞 Great for outdoor plans";
+
+else if([71,73,75].includes(current.weathercode))
+suggestion="❄ Wear warm clothes";
+
+else
+suggestion="🌍 Good day for travel";
+
+/* ---------- 5 Day Forecast ---------- */
+
+let forecastHTML="<br><b>📆 5 Day Forecast</b><br>";
+
+for(let i=0;i<5;i++){
+
+const fIcon=weatherCodeToIcon(daily.weathercode[i]);
+
+forecastHTML+=`
+<div style="
+margin-top:8px;
+padding:8px;
+border-radius:10px;
+background:rgba(255,255,255,0.05)
+">
+${daily.time[i]} — ${fIcon}
+<br>
+${daily.temperature_2m_min[i]}°C / ${daily.temperature_2m_max[i]}°C
+</div>
+`;
+}
+
+/* ---------- MODAL ---------- */
+
+modalTitle.innerText=`Weather in ${c.name}`;
+
+modalDesc.innerHTML=`
+
+<div style="font-size:22px;margin-bottom:8px">
+${icon}
+</div>
+
+<div style="margin-bottom:10px">
+🌡️ Temperature: <b>${current.temperature}°C</b><br>
+🌬️ Wind: <b>${current.windspeed} km/h</b><br>
+</div>
+
+<div style="
+margin-top:10px;
+padding:10px;
+border-radius:12px;
+background:rgba(0,234,255,0.08)
+">
+🧠 ${suggestion}
+</div>
+
+${forecastHTML}
+
+`;
+
+modal.classList.add('active');
+
+}catch(err){
+alert("Weather data unavailable");
+}
+
+}
+
+
+/* ===============================
+🌍 THEME AWARE GLOBE
+=============================== */
+
+let globe;
+
+function initGlobe(){
+
+const isLight=document.body.classList.contains("light-theme");
+
+globe = Globe()(document.getElementById('globeViz'))
+.globeImageUrl(
+isLight
+? '//unpkg.com/three-globe/example/img/earth-day.jpg'
+: '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
+)
 .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-.backgroundColor('#020617')
+.backgroundColor(isLight ? '#e2e8f0' : '#020617')
 .pointsData(countries)
 .pointLat(d=>d.lat)
 .pointLng(d=>d.lng)
@@ -124,10 +412,45 @@ countrySel.value=d.code;
 loadTimeline();
 });
 
-/* ⭐ ADDED MOBILE RESIZE SUPPORT */
+resizeGlobe();
+rotateGlobeToCountry();
+}
+
+
+/* ===============================
+🌗 THEME TOGGLE SYSTEM
+=============================== */
+
+const themeToggle = document.getElementById("themeToggle");
+
+if(localStorage.getItem("theme")==="light"){
+document.body.classList.add("light-theme");
+themeToggle.innerText="🌞 Light Mode";
+}
+
+themeToggle.onclick=()=>{
+
+document.body.classList.toggle("light-theme");
+
+if(document.body.classList.contains("light-theme")){
+localStorage.setItem("theme","light");
+themeToggle.innerText="🌞 Light Mode";
+}else{
+localStorage.setItem("theme","dark");
+themeToggle.innerText="🌙 Dark Mode";
+}
+
+/* Rebuild globe */
+document.getElementById("globeViz").innerHTML="";
+initGlobe();
+
+};
+
+/* MOBILE RESIZE SUPPORT */
+
 function resizeGlobe(){
 const container=document.getElementById("globeViz");
-if(!container) return;
+if(!container || !globe) return;
 globe.width(container.offsetWidth);
 globe.height(container.offsetHeight);
 }
@@ -139,6 +462,7 @@ setTimeout(resizeGlobe,600);
 setTimeout(resizeGlobe,500);
 
 function rotateGlobeToCountry(){
+if(!globe) return;
 const c=countries.find(x=>x.code===countrySel.value);
 if(!c) return;
 globe.pointOfView({lat:c.lat,lng:c.lng,altitude:1.8},1500);
@@ -148,6 +472,6 @@ countrySel.onchange=loadTimeline;
 typeSel.onchange=loadTimeline;
 
 window.addEventListener("load", ()=>{
+initGlobe();
 loadTimeline();
-resizeGlobe();
 });
